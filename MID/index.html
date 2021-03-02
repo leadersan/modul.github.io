@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silahkan Login Terlebih dahulu</title>
+    <link rel="stylesheet" href="login.css">
+            <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- Popper JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+</head>
+<body">
+    <form id="app" @submit="checkForm" action="home.html" method="post">
+        <div class="container">
+        
+        <h1>LOGIN</h1>
+        <from>
+            <p v-if="errors.length">
+                <b>Silahkan lengkapi NIM dan Password anda</b>
+                <ul>
+                  <li v-for="error in errors">{{ error }}</li>
+                </ul>
+            </p>
+            <label>NIM</label><br>
+            <input type="text"  v-model="nim"><br>
+            <label>Password</label><br>
+            <input type="password" v-model="password"><br>
+            <button>LOG IN</button>
+        </from>
+         </div>
+
+        <script>
+            var app = new Vue({
+                el:'#app',
+                 data: {
+                 errors:[], 
+                    nim:null,
+                     password:null
+            },
+                methods:{
+     checkForm:function(e) {
+      if(this.nim && this.password) return true;
+      this.errors = [];
+      if(!this.nim) this.errors.push("Masukkan NIM anda");
+      if(!this.password) this.errors.push("Masukkan Password anda");
+      e.preventDefault();
+        }
+        }
+        })
+
+     </script>
+    </form>
+</body>
+</html>

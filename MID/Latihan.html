@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+            <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="home.css">
+        <title>Tugas Project MID membuat MODUL Guru</title>
+    </head>
+    <body style="background-color:hotpink">
+        <nav class="navbar navbar-expand-md bg-primary navbar-dark">
+            <div class="collapse navbar-collapse justify-content-center" id="collpasibleNavbar">
+              <ul class="navbar-nav">
+                  <li class="nav-item">
+                      <a class="nav-link" href="home.html">DAFTAR SEKOLAH |</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="Materi.html">MATERI PEMBELAJARAN |</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="Absensi.html">ABSENSI</a>
+                </li>
+              </ul>    
+            </div>
+        </nav>
+        <div id="app">
+            <div class="container">
+                <div class="py-5 text-center">
+                  <h2>Daftar Latihan Guru SeDunia</h2>
+                </div>
+                <div class="col-md-12">
+                    <h4 class="mb-3"><button class="btn btn-md btn-primary" v-on:click="resetForm()">Pengawas Baru</button>
+                    </h4>
+                <table class="table table-striped">
+                    <tr>
+                        <th>No.</th>
+                        <th>Materi Pembelajaran</th>
+                        <th>Tanggal Pelaksanaan</th>
+                        <th>Total Materi</th>
+                        <th>Pengawas Latihan</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+                    <tr v-for="latihan in latihan">
+                        <td>{{ latihan.id }}</td>
+                        <td>{{ latihan.materi }}</td>
+                        <td>{{ latihan.hariPelaksanaan }}</td>
+                        <td>{{ latihan.jumlahMateri }}</td>
+                        <td>{{ latihan.guruPengawas }}</td>
+                        <td><button class="btn btn-md btn-warning" v-on:click="getEdit(latihan)">Edit</button></td>
+                        <td><button class="btn btn-danger" v-on:click="getDelete(latihan)">Delete</button></td>
+                    </li>
+                </table>
+                <div v-if="message" class="alert alert-success" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                </div>
+                
+            
+                <h4 class="mb-3">Edit/Delete</h4>
+                <form class="needs-validation" novalidate>
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label for="materi">Materi Pembelajaran</label>
+                      <input  v-model="materi" type="text" class="form-control" id="materi" placeholder="" value="" required>
+                      <div class="invalid-feedback">
+                        Isi Materi Pembelajaran.
+                      </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label for="hariPelaksanaan">Tanggal Pelaksanaan</label>
+                      <input v-model="hariPelaksanaan" type="text" class="form-control" id="hariPelaksanaan" placeholder="" value="" required>
+                      <div class="invalid-feedback">
+                        Isi Tanggal Pelaksanaan
+                      </div>
+                    </div>
+                  </div>
+      
+                  <div class="mb-3">
+                    <label for="jumlahMateri">Total Materi</label>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">Jumlah</span>
+                      </div>
+                      <input v-model="jumlahMateri" type="text" class="form-control" id="jumlahMateri" required>
+                      <div class="invalid-feedback" style="width: 100%;">
+                        Masukkan Total Materi
+                      </div>
+                    </div>
+                  </div>
+      
+                  <div class="mb-3">
+                    <label for="text">guruPengawas <span class="text-muted">(Optional)</span></label>
+                    <input v-model="guruPengawas" class="form-control" id="guruPengawas">
+                    <div class="invalid-feedback">
+                      Tolong Masukkan guruPengawas dengan benar
+                    </div>
+                  </div>
+      
+                  </div>
+                
+                  <hr class="mb-4">
+                  <button v-if="!editMode && !deleteMode" v-on:click="createlatihan" class="btn btn-primary btn-lg btn-block" type="submit">Submit Data</button>
+                  <button v-if="editMode" v-on:click="updatelatihan" class="btn btn-warning btn-lg btn-block" type="submit">Update Data</button>
+                  <button v-if="deleteMode" v-on:click="deletelatihan" class="btn btn-danger btn-lg btn-block" type="submit">Delete Data</button>
+                  
+                </form>
+             </div>
+        </div>    
+    
+        <!-- Axios -->
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    
+        <script>
+            var app = new Vue ({
+                el: '#app',
+                data: {
+                    errors: [],
+                    message:null,
+                    latihan:[],
+                    latihanIdEdit: null,
+                    latihanIdDelete: null,
+                    editMode: false,
+                    deleteMode: false,
+                    materi: '',
+                    hariPelaksanaan: '',
+                    jumlahMateri: '',
+                    guruPengawas: '',
+                },
+                mounted: function() {
+                    this.getlatihan();
+                },
+                methods: {
+                    getlatihan() {
+                        axios.get('https://60375775543504001772218a.mockapi.io/latihan')
+                            .then(response => {
+                                this.latihan = response.data;
+                                console.log(response);
+                            })
+                            .catch(error => {
+                                console.log(error);
+                            });
+                    },
+                    // Create Jalan
+                    createlatihan: function(){
+                        axios.post('https://60375775543504001772218a.mockapi.io/latihan', {
+                            materi: this.materi,
+                            hariPelaksanaan: this.hariPelaksanaan,
+                            jumlahMateri: this.jumlahMateri,
+                            guruPengawas: this.guruPengawas,
+                        })
+                        .then(response => {
+                                this.getlatihan();
+                                this.message = "Your data has been submitted";
+                                console.log(response);
+                        })
+                        .catch(error => {
+                                console.log(error);
+                        });
+                    },
+                    // reset Form jalan
+                    resetForm: function () {
+                        this.message = null;
+                        this.editMode = false;
+                        this.deleteMode = false;
+                        this.latihanIdEdit = null;
+                        this.materi = null;
+                        this.hariPelaksanaan = null;
+                        this.jumlahMateri = null;
+                        this.guruPengawas = null;
+                    },
+                    
+                    getEdit: function (latihan) {
+                        this.message = null;
+                        this.editMode = true;
+                        this.deleteMode = false;
+                        this.latihanIdEdit = latihan.id;
+                        this.materi = latihan.materi;
+                        this.hariPelaksanaan = latihan.hariPelaksanaan;
+                        this.jumlahMateri = latihan.jumlahMateri;
+                        this.guruPengawas = latihan.guruPengawas;
+                    },
+                    getDelete: function (latihan) {
+                        this.message = null;
+                        this.deleteMode = true;
+                        this.editMode = false;
+                        this.latihanIdDelete = latihan.id;
+                        this.materi = latihan.materi;
+                        this.hariPelaksanaan = latihan.hariPelaksanaan;
+                        this.latihanName = latihan.jumlahMateri;
+                        this.guruPengawas = latihan.guruPengawas;
+                    },
+                    updatelatihan: function () {
+                        axios.put(`https://60375775543504001772218a.mockapi.io/latihan/${this.latihanIdEdit}`, {
+                                materi: this.materi,
+                                hariPelaksanaan: this.hariPelaksanaan,
+                                jumlahMateri: this.jumlahMateri,
+                                guruPengawas: this.guruPengawas,
+                            })
+                            .then(res => {
+                                // handle success
+                                this.message = "Your data has been updated";
+                                this.getlatihan();
+                            })
+                            .catch(err => {
+                                // handle error
+                                console.log(err);
+                            })
+                    },
+                    // Delete latihan
+                    deletelatihan: function () {
+                        axios.delete(`https://60375775543504001772218a.mockapi.io/latihan/${this.latihanIdDelete}`)
+                            .then(res => {
+                                // handle success
+                                this.message = "Your data has been deleted";
+                                this.getlatihan();
+                            })
+                            .catch(err => {
+                                // handle error
+                                console.log(err);
+                            })
+                    }
+                }
+            })
+            
+        </script>
+    
+    </body>
+    </html>, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+</html>

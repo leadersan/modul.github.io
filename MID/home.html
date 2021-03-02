@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+        <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- Popper JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="home.css">
+    <title>Tugas Project MID membuat MODUL Guru</title>
+</head>
+<body style="background-color: cyan;">
+    <nav class="navbar navbar-expand-md bg-primary navbar-dark">
+        <div class="collapse navbar-collapse justify-content-center" id="collpasibleNavbar">
+          <ul class="navbar-nav">
+              <li class="nav-item">
+                  <a class="nav-link" href="Latihan.html">LATIHAN |</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="Materi.html">MATERI PEMBELAJARAN |</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="Absensi.html">ABSENSI</a>
+            </li>
+          </ul>    
+        </div>
+    </nav>
+    <div id="app">
+        <div class="container">
+            <div class="py-5 text-center">
+              <h2>DAFTAR UPDATE SEKOLAH DI DUNIA</h2>
+            </div>
+            <div class="col-md-12">
+                <h4 class="mb-3"><button class="btn btn-md btn-primary" v-on:click="resetForm()">Daftar Sekolah Baru</button>
+                </h4>
+            <table class="table table-striped">
+                <tr>
+                    <th>No.</th>
+                    <th>Nama Sekolah</th>
+                    <th>Jumlah Siswa</th>
+                    <th>Kepala Sekolah</th>
+                    <th>Alamat Sekolah</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+                <tr v-for="buku in buku">
+                    <td>{{ buku.id }}</td>
+                    <td>{{ buku.namaSekolah }}</td>
+                    <td>{{ buku.jumlahSiswa }}</td>
+                    <td>{{ buku.kepalaSekolah }}</td>
+                    <td>{{ buku.alamat }}</td>
+                    <td><button class="btn btn-md btn-warning" v-on:click="getEdit(buku)">Edit</button></td>
+                    <td><button class="btn btn-danger" v-on:click="getDelete(buku)">Delete</button></td>
+                </li>
+            </table>
+            <div v-if="message" class="alert alert-success" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+            </div>
+            
+        
+            <h4 class="mb-3">Edit/Delete</h4>
+            <form class="needs-validation" novalidate>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="namaSekolah">Nama Sekolah</label>
+                  <input  v-model="namaSekolah" type="text" class="form-control" id="namaSekolah" placeholder="" value="" required>
+                  <div class="invalid-feedback">
+                    Isi Nama Sekolah.
+                  </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="jumlahSiswa">Jumlah Siswa</label>
+                  <input v-model="jumlahSiswa" type="text" class="form-control" id="jumlahSiswa" placeholder="" value="" required>
+                  <div class="invalid-feedback">
+                    Isi Jumlah Siswa
+                  </div>
+                </div>
+              </div>
+  
+              <div class="mb-3">
+                <label for="kepalaSekolah">Nama Kepala Sekolah</label>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">Nama</span>
+                  </div>
+                  <input v-model="kepalaSekolah" type="text" class="form-control" id="kepalaSekolah" required>
+                  <div class="invalid-feedback" style="width: 100%;">
+                    Masukkan nama Kepala Sekolah
+                  </div>
+                </div>
+              </div>
+  
+              <div class="mb-3">
+                <label for="text">Alamat <span class="text-muted">(Optional)</span></label>
+                <input v-model="alamat" class="form-control" id="alamat">
+                <div class="invalid-feedback">
+                  Tolong Masukkan alamat dengan benar
+                </div>
+              </div>
+  
+              </div>
+            
+              <hr class="mb-4">
+              <button v-if="!editMode && !deleteMode" v-on:click="createBuku" class="btn btn-primary btn-lg btn-block" type="submit">Submit Data</button>
+              <button v-if="editMode" v-on:click="updateBuku" class="btn btn-warning btn-lg btn-block" type="submit">Update Data</button>
+              <button v-if="deleteMode" v-on:click="deleteBuku" class="btn btn-danger btn-lg btn-block" type="submit">Delete Data</button>
+              
+            </form>
+         </div>
+    </div>    
+
+    <!-- Axios -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <script>
+        var app = new Vue ({
+            el: '#app',
+            data: {
+                errors: [],
+                message:null,
+                buku:[],
+                bukuIdEdit: null,
+                bukuIdDelete: null,
+                editMode: false,
+                deleteMode: false,
+                namaSekolah: '',
+                jumlahSiswa: '',
+                kepalaSekolah: '',
+                alamat: '',
+            },
+            mounted: function() {
+                this.getBuku();
+            },
+            methods: {
+                getBuku() {
+                    axios.get('https://60375775543504001772218a.mockapi.io/buku')
+                        .then(response => {
+                            this.buku = response.data;
+                            console.log(response);
+                        })
+                        .catch(error => {
+                            console.log(error);
+                        });
+                },
+                // Create Jalan
+                createBuku: function(){
+                    axios.post('https://60375775543504001772218a.mockapi.io/buku', {
+                        namaSekolah: this.namaSekolah,
+                        jumlahSiswa: this.jumlahSiswa,
+                        kepalaSekolah: this.kepalaSekolah,
+                        alamat: this.alamat,
+                    })
+                    .then(response => {
+                            this.getBuku();
+                            this.message = "Your data has been submitted";
+                            console.log(response);
+                    })
+                    .catch(error => {
+                            console.log(error);
+                    });
+                },
+                // reset Form jalan
+                resetForm: function () {
+                    this.message = null;
+                    this.editMode = false;
+                    this.deleteMode = false;
+                    this.bukuIdEdit = null;
+                    this.namaSekolah = null;
+                    this.jumlahSiswa = null;
+                    this.kepalaSekolah = null;
+                    this.alamat = null;
+                },
+                
+                getEdit: function (buku) {
+                    this.message = null;
+                    this.editMode = true;
+                    this.deleteMode = false;
+                    this.bukuIdEdit = buku.id;
+                    this.namaSekolah = buku.namaSekolah;
+                    this.jumlahSiswa = buku.jumlahSiswa;
+                    this.kepalaSekolah = buku.kepalaSekolah;
+                    this.alamat = buku.alamat;
+                },
+                getDelete: function (buku) {
+                    this.message = null;
+                    this.deleteMode = true;
+                    this.editMode = false;
+                    this.bukuIdDelete = buku.id;
+                    this.namaSekolah = buku.namaSekolah;
+                    this.jumlahSiswa = buku.jumlahSiswa;
+                    this.bukuName = buku.kepalaSekolah;
+                    this.alamat = buku.alamat;
+                },
+                updateBuku: function () {
+                    axios.put(`https://60375775543504001772218a.mockapi.io/buku/${this.bukuIdEdit}`, {
+                            namaSekolah: this.namaSekolah,
+                            jumlahSiswa: this.jumlahSiswa,
+                            kepalaSekolah: this.kepalaSekolah,
+                            alamat: this.alamat,
+                        })
+                        .then(res => {
+                            // handle success
+                            this.message = "Your data has been updated";
+                            this.getBuku();
+                        })
+                        .catch(err => {
+                            // handle error
+                            console.log(err);
+                        })
+                },
+                // Delete buku
+                deleteBuku: function () {
+                    axios.delete(`https://60375775543504001772218a.mockapi.io/buku/${this.bukuIdDelete}`)
+                        .then(res => {
+                            // handle success
+                            this.message = "Your data has been deleted";
+                            this.getBuku();
+                        })
+                        .catch(err => {
+                            // handle error
+                            console.log(err);
+                        })
+                }
+            }
+        })
+        
+    </script>
+
+</body>
+</html>
